@@ -1,16 +1,14 @@
 import pandas as pd
 import random 
 
-filename = '../data/word_list.csv'
-df = pd.read_csv(filename, delimiter="\t")
-en_word_list = df['En']
-ko_word_list = df['Ko']
+def readFile(filename):
+    df = pd.read_csv(filename, delimiter="\t")
+    return df['En'], df['Ko']
 
-for i in range(len(en_word_list)):
-    en = en_word_list[i]
-    answer = ko_word_list[i]
+def shuffleQuestions(max_size):    
     pos_correct = random.choice(range(4))
-    numbers = list(range(len(en_word_list)))
+    
+    numbers = list(range(max_size))
     random.shuffle(numbers)
     random_num = numbers.pop()
     
@@ -19,9 +17,22 @@ for i in range(len(en_word_list)):
         pos_wrong = numbers.pop()
         if pos_wrong != pos_correct:
             pos_wrongs.add(pos_wrong)
+    
+    # print('correct : {}, wrong : {}'.format(pos_correct, pos_wrongs))
+    return pos_correct, pos_wrongs
 
-    while True:
-        print("{}의 뜻으로 맞는 것은 무엇일까요?\n".format(en))
+en_word_list, ko_word_list = readFile('../data/word_list.csv')
+
+for i in range(len(en_word_list)):
+    en = en_word_list[i]
+    answer = ko_word_list[i]
+    
+    pos_correct, pos_wrongs = shuffleQuestions(len(en_word_list))
+    
+    # print(pos_correct, pos_wrongs)
+    
+    while True :
+        print("{}의 뜻으로 맞는 것은 무엇일까요?".format(en))
         temp_wrongs = set(pos_wrongs)
         for i in range(4):
             if i == pos_correct:
